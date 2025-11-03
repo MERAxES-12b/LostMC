@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buchungssystem - Lost MC</title>
+<link rel="icon" type="image/png" href="images/lostmc-icon.png">
+<style>
+body {
+    background: url('images/Bild_LostMC.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family:'Inter','Segoe UI',sans-serif;
+    color:#e5e5f0;
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow-x:hidden;
+    position: relative;
+}
+body::before {
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(10,10,20,0.65);
+    backdrop-filter: blur(2px);
+    z-index:-1;
+}
+
+/* Content-Box */
+.content-container {
+    max-width:500px;
+    width:100%;
+    padding:50px 60px;
+    background: rgba(25,25,35,0.45);
+    border-radius:20px;
+    box-shadow:0 0 35px rgba(140,80,255,0.25);
+    backdrop-filter:blur(4px);
+    text-align:center;
+    z-index:1;
+}
+h1 {
+    font-size:2rem;
+    font-weight:700;
+    color:#c699ff;
+    text-shadow:0 0 14px rgba(180,120,255,0.6);
+    margin-bottom:35px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+.menu-btn {
+    display:block;
+    width:100%;
+    max-width:400px;
+    padding:14px;
+    margin:0 auto 20px auto;
+    background: rgba(100,50,200,0.35);
+    color:#fff;
+    font-size:18px;
+    font-weight:600;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    text-decoration:none;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    transition:0.3s;
+    text-align:center;
+}
+.menu-btn:hover {
+    background: rgba(157,77,237,0.6);
+    transform: scale(1.03);
+    box-shadow:0 0 20px rgba(157,77,237,0.45);
+}
+
+/* Eingabefelder außerhalb der Gegenstände */
+.content-container > input {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    margin: 10px auto;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    color: #000;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Item-Reihen */
+.item-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+.item-row input {
+    flex: 1;
+    margin: 0;
+}
+
+/* Schwarzes / Grünes Geld Abstand */
+#blackMoney {
+    margin-top: 15px;
+}
+
+/* Log-Bereich rechts */
+.log-container {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 250px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: rgba(25,25,35,0.75);
+    border-radius: 15px;
+    padding: 15px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 20px rgba(140,80,255,0.4);
+    color: #e5e5f0;
+}
+.log-container h2 {
+    font-size: 16px;
+    color: #c699ff;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.log-entry {
+    margin-bottom: 10px;
+    padding: 8px;
+    background: rgba(50,20,70,0.35);
+    border-radius: 10px;
+    font-size: 14px;
+    white-space: pre-line;
+}
+
+/* Button über Logs */
+#clearLogsBtn {
+    width: 80%;
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Zurück-Button oben links */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(25, 25, 35, 0.6);
+    color: #c699ff;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 10px rgba(140,80,255,0.3);
+    transition: 0.3s;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.back-btn:hover {
+    background: rgba(157,77,237,0.7);
+    color: #fff;
+    transform: scale(1.1);
+}
+</style>
+</head>
+<body>
+
+<!-- 🔙 Zurück-Button -->
+<button class="back-btn" onclick="goBack()">←</button>
+
+<div class="content-container">
+    <h1>Buchungssystem</h1>
+
+    <input type="text" id="receiver" placeholder="Nehmer">
+
+    <div id="itemsContainer">
+        <div class="item-row">
+            <input type="text" class="item-name" placeholder="Gegenstand">
+            <input type="number" class="item-quantity" placeholder="Anzahl" min="1">
+        </div>
+    </div>
+	<button class="menu-btn" onclick="addItemRow()" style="margin-top: 10px;">+ weiteren Gegenstand</button>
+
+    <input type="text" id="greenMoney" placeholder="Grüngeld">
+    <input type="text" id="blackMoney" placeholder="Schwarzgeld">
+
+    <button class="menu-btn" id="bookBtn" onclick="addBooking()" style="margin-top: 20px;">Buchen</button>
+</div>
+
+<!-- Button zum Löschen aller Logs (nur Admin/Owner) -->
+<div style="position: fixed; top: 20px; right: 20px; width: 250px; text-align:center; z-index:11;">
+    <button class="menu-btn" id="clearLogsBtn" style="display:none;">Alle Logs löschen</button>
+</div>
+
+<div class="log-container">
+    <h2>Buchungs-Logs</h2>
+    <div id="bookingLogs"></div>
+</div>
+
+<script>
+// Aktuell angemeldeter Benutzer und Rolle
+const currentUser = localStorage.getItem("username") || "Unbekannt";
+const role = localStorage.getItem("role") || "USER"; // USER, ADMIN, OWNER
+
+let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+// Button nur für Admin/Owner sichtbar
+if(role === "ADMIN" || role === "OWNER") {
+    document.getElementById("clearLogsBtn").style.display = "block";
+    document.getElementById("clearLogsBtn").addEventListener("click", clearLogs);
+}
+
+// Geld formatieren: 1.000.000 $
+function formatMoney(value){
+    if(!value) return "";
+    return parseInt(value).toLocaleString('de-DE') + " $";
+}
+
+// Neue Item-Reihe hinzufügen
+function addItemRow(){
+    const container = document.getElementById("itemsContainer");
+    const div = document.createElement("div");
+    div.classList.add("item-row");
+    div.innerHTML = `
+        <input type="text" class="item-name" placeholder="Gegenstand">
+        <input type="number" class="item-quantity" placeholder="Anzahl" min="1">
+    `;
+    container.appendChild(div);
+}
+
+// Buchung hinzufügen
+function addBooking(){
+    const receiver = document.getElementById("receiver").value.trim();
+    if(!receiver){
+        alert("Bitte Nehmer angeben");
+        return;
+    }
+
+    const itemRows = document.querySelectorAll("#itemsContainer .item-row");
+    const items = [];
+    itemRows.forEach(r => {
+        const name = r.querySelector(".item-name").value.trim();
+        const qty = r.querySelector(".item-quantity").value;
+        if(name && qty) items.push({name, qty});
+    });
+
+    if(items.length === 0){
+        alert("Bitte mindestens einen Gegenstand angeben");
+        return;
+    }
+
+    const green = document.getElementById("greenMoney").value;
+    const black = document.getElementById("blackMoney").value;
+
+    const now = new Date();
+    const timestamp = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+
+    const entry = { giver: currentUser, receiver, items, green, black, timestamp };
+    bookings.unshift(entry);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+    updateBookingLogs();
+
+    // Felder zurücksetzen
+    document.getElementById("receiver").value = "";
+    document.getElementById("greenMoney").value = "";
+    document.getElementById("blackMoney").value = "";
+    document.getElementById("itemsContainer").innerHTML = `
+        <div class="item-row">
+            <input type="text" class="item-name" placeholder="Gegenstand">
+            <input type="number" class="item-quantity" placeholder="Anzahl" min="1">
+        </div>
+    `;
+}
+
+// Logs aktualisieren
+function updateBookingLogs(){
+    const logDiv = document.getElementById("bookingLogs");
+    logDiv.innerHTML = "";
+    bookings.forEach(b => {
+        const div = document.createElement("div");
+        div.classList.add("log-entry");
+
+        let itemsText = "";
+        b.items.forEach(i => { itemsText += `${i.qty} ${i.name}\n`; });
+
+        let moneyText = "";
+        if(b.green) moneyText += `Grüngeld: ${formatMoney(b.green)}\n`;
+        if(b.black) moneyText += `Schwarzgeld: ${formatMoney(b.black)}`;
+
+        div.textContent = `${b.giver} - ${b.receiver}\n${itemsText}------------------------------------\n${moneyText}\n${b.timestamp}`;
+        logDiv.appendChild(div);
+    });
+}
+
+// Logs löschen (nur Admin/Owner)
+function clearLogs(){
+    if(role !== "ADMIN" && role !== "OWNER") return;
+    if(confirm("Alle Buchungs-Logs wirklich löschen?")) {
+        bookings = [];
+        localStorage.removeItem("bookings");
+        updateBookingLogs();
+        alert("Alle Buchungs-Logs wurden gelöscht!");
+    }
+}
+
+// 🔙 Zurück-Funktion
+function goBack(){
+    history.back();
+}
+
+// Beim Laden Logs anzeigen
+updateBookingLogs();
+</script>
+
+</body>
+</html>
+
+
+
+
+
+

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infomenü - Lost MC</title>
+<link rel="icon" type="image/png" href="images/lostmc-icon.png">
+
+<style>
+/* === Body & Hintergrund === */
+body {
+  background: url('images/Bild_LostMC.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Inter','Segoe UI',sans-serif;
+  color: #e5e5f0;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10,10,20,0.65);
+  backdrop-filter: blur(2px);
+  z-index: -1;
+}
+
+/* === Hamburger Menu === */
+.hamburger {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 35px;
+  height: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 10;
+}
+.hamburger span {
+  display: block;
+  height: 4px;
+  background: #c699ff;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+/* === Sidebar === */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100%;
+  background: rgba(25,25,35,0.95);
+  backdrop-filter: blur(5px);
+  box-shadow: 5px 0 30px rgba(140,80,255,0.25);
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: 0.3s;
+  z-index: 9;
+}
+.sidebar.show { left: 0; }
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #c699ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(180,120,255,0.6);
+}
+
+/* === Sidebar Buttons === */
+.category-btn {
+  padding: 12px;
+  background: rgba(100,50,200,0.35);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+  backdrop-filter: blur(4px);
+  text-align: center;
+}
+.category-btn:hover {
+  background: rgba(157,77,237,0.6);
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(157,77,237,0.4);
+}
+
+/* === Topbar === */
+.topbar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 10;
+}
+.user-info { font-size: 16px; color: #ccc; }
+.logout-btn {
+  padding: 10px 20px;
+  background: rgba(100,50,200,0.35);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.logout-btn:hover {
+  background: rgba(157,77,237,0.6);
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(157,77,237,0.4);
+}
+
+/* === Content-Box === */
+.content-container {
+  max-width: 500px;
+  width: 100%;
+  padding: 50px 60px;
+  background: rgba(25,25,35,0.45);
+  border-radius: 20px;
+  box-shadow: 0 0 35px rgba(140,80,255,0.25);
+  backdrop-filter: blur(4px);
+  text-align: center;
+  z-index: 1;
+}
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #c699ff;
+  text-shadow: 0 0 14px rgba(180,120,255,0.6);
+  margin-bottom: 35px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* === Content Buttons === */
+.menu-btn {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  padding: 14px;
+  margin: 0 auto 20px auto;
+  background: rgba(100,50,200,0.35);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: 0.3s;
+  text-align: center;
+}
+.menu-btn:hover {
+  background: rgba(157,77,237,0.6);
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(157,77,237,0.45);
+}
+.menu-btn.back {
+  background: #333;
+}
+.menu-btn.back:hover {
+  background: #555;
+  box-shadow: none;
+  transform: scale(1.03);
+}
+
+/* === Sidebar Eingabefelder & Member-Liste === */
+.sidebar input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 8px;
+  background: rgba(20,20,30,0.6);
+  color: #fff;
+  text-align: center;
+}
+.member-list {
+  text-align: left;
+  max-height: 150px;
+  overflow-y: auto;
+  background: rgba(20,20,30,0.4);
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+/* === Passwort Blur Effekt für Mitglieder === */
+.member-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  background: rgba(20,20,30,0.5);
+  border-radius: 8px;
+  cursor: default;
+}
+.member-pass {
+  filter: blur(5px);
+  transition: filter 0.2s;
+  margin-left: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.member-pass.show {
+  filter: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Hamburger -->
+<div class="hamburger" onclick="toggleSidebar()" id="hamburger">
+  <span></span>
+  <span></span>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <h2>Kategorie</h2>
+  <h3>Mitgliederverwaltung</h3>
+
+  <input type="text" id="newUser" placeholder="Benutzername">
+  <input type="text" id="newPass" placeholder="Passwort">
+  <button class="category-btn" onclick="addMember()">Mitglied hinzufügen</button>
+
+  <input type="text" id="removeUser" placeholder="Benutzername">
+  <button class="category-btn" onclick="removeMember()">Mitglied entfernen</button>
+
+  <input type="text" id="changeUser" placeholder="Benutzername">
+  <input type="text" id="oldPass" placeholder="Altes Passwort">
+  <input type="text" id="newPassChange" placeholder="Neues Passwort">
+  <button class="category-btn" onclick="changePassword()">Passwort ändern</button>
+
+  <h3>Mitgliederliste</h3>
+  <div class="member-list" id="memberList"></div>
+</div>
+
+<!-- Obere Leiste -->
+<div class="topbar">
+  <div class="user-info" id="userDisplay"></div>
+  <button class="logout-btn" onclick="logout()">Abmelden</button>
+</div>
+
+<!-- Hauptinhalt -->
+<div class="content-container">
+  <h1>Infomenü</h1>
+  <a href="bestandsliste.html" class="menu-btn">Bestandsliste</a>
+  <a href="hierarchie.html" class="menu-btn">Hierarchie</a>
+  <a href="mitglieder.html" class="menu-btn">Mitglieder</a>
+  <a href="regeln.html" class="menu-btn">Regeln</a>
+  <a href="wichtige.html" class="menu-btn">Wichtiges</a>
+  <div id="adminSection">
+    <a href="aktenschrank.html" class="menu-btn">Aktenschrank</a>
+  </div>
+</div>
+
+<script>
+// === Passwörter für Rollen ===
+const ownerPassword = "owner999";
+const adminPassword = "admin123";
+
+// === Benutzerliste aus localStorage ===
+let users = JSON.parse(localStorage.getItem("users")) || {};
+
+// === Rolle und Name des aktuellen Benutzers ===
+const username = localStorage.getItem("username");
+let role = localStorage.getItem("role");
+
+if (!username) {
+  window.location.href = "index.html";
+} else {
+  let displayRole = '';
+  if (role === 'ADMIN') displayRole = 'ADMIN';
+  else if (role === 'OWNER') displayRole = 'OWNER';
+
+  document.getElementById("userDisplay").textContent =
+    `Eingeloggt als: ${username}${displayRole ? ' ('+displayRole+')':''}`;
+
+  if (role === 'ADMIN' || role === 'OWNER') {
+    document.getElementById("hamburger").style.display = 'flex';
+    document.getElementById("sidebar").style.display = 'flex';
+    updateMemberList();
+    document.getElementById("adminSection").style.display = 'block';
+  } else {
+    document.getElementById("hamburger").style.display = 'none';
+    document.getElementById("sidebar").style.display = 'none';
+    document.getElementById("adminSection").style.display = 'none';
+  }
+}
+
+// === Sidebar Funktionen ===
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("show");
+}
+
+function addMember() {
+  const u = document.getElementById("newUser").value.trim();
+  const p = document.getElementById("newPass").value.trim();
+  if (u && p) {
+    users[u] = p;
+    localStorage.setItem("users", JSON.stringify(users));
+    updateMemberList();
+    alert("Mitglied hinzugefügt");
+  }
+}
+
+function removeMember() {
+  const u = document.getElementById("removeUser").value.trim();
+  if (users[u]) {
+    delete users[u];
+    localStorage.setItem("users", JSON.stringify(users));
+    updateMemberList();
+    alert("Mitglied entfernt");
+  } else alert("Benutzer nicht gefunden");
+}
+
+function changePassword() {
+  const u = document.getElementById("changeUser").value.trim();
+  const oldP = document.getElementById("oldPass").value.trim();
+  const newP = document.getElementById("newPassChange").value.trim();
+  if (users[u] && users[u] === oldP) {
+    users[u] = newP;
+    localStorage.setItem("users", JSON.stringify(users));
+    updateMemberList();
+    alert("Passwort geändert");
+  } else alert("Benutzer nicht gefunden oder falsches altes Passwort");
+}
+
+// === Mitgliederliste aktualisieren (mit Passwort sichtbar beim Klick) ===
+function updateMemberList() {
+  const listDiv = document.getElementById("memberList");
+  listDiv.innerHTML = "";
+  for (const u in users) {
+    const pass = users[u];
+    const div = document.createElement("div");
+    div.classList.add("member-entry");
+    div.innerHTML = `
+      <span>${u}</span>
+      <span class="member-pass" title="Klicke um Passwort zu sehen">${pass}</span>
+    `;
+    const passSpan = div.querySelector(".member-pass");
+    passSpan.addEventListener("click", () => {
+      passSpan.classList.toggle("show");
+    });
+    listDiv.appendChild(div);
+  }
+}
+
+function logout() {
+  localStorage.removeItem("username");
+  localStorage.removeItem("role");
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
