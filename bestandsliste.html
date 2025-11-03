@@ -36,7 +36,7 @@ body::before {
     max-width:500px;
     width:100%;
     padding:50px 60px;
-    background: rgba(25,25,35,0.45);
+    background: rgba(25,25,35,0.45);*
     border-radius:20px;
     box-shadow:0 0 35px rgba(140,80,255,0.25);
     backdrop-filter:blur(4px);
@@ -188,9 +188,9 @@ h1 {
 
     <div id="itemsContainer">
         <div class="item-row">
-            <input type="text" class="item-name" placeholder="Gegenstand">
-            <input type="number" class="item-quantity" placeholder="Anzahl" min="1">
-        </div>
+    		<input type="number" class="item-quantity" placeholder="Anzahl" min="1">
+   			<input type="text" class="item-name" placeholder="Gegenstand">
+		</div>
     </div>
 	<button class="menu-btn" onclick="addItemRow()" style="margin-top: 10px;">+ weiteren Gegenstand</button>
 
@@ -327,6 +327,7 @@ updateBookingLogs();
 
 </body>
 </html>
+
 
 
 
