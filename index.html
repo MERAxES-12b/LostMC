@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost MC | Login</title>
+<link rel="icon" type="image/png" href="images/lostmc-icon.png">
+<style>
+/* Grundstil wie gehabt */
+* { box-sizing: border-box; }
+body { margin:0; padding:0; height:100vh; background:url('images/Bild_LostMC.jpg') no-repeat center center fixed; background-size:cover; display:flex; justify-content:center; align-items:center; font-family:'Inter','Segoe UI',sans-serif; color:#e5e5f0; }
+body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(10,10,20,0.65); backdrop-filter:blur(2px); z-index:0; }
+.login-box { position:relative; z-index:1; width:100%; max-width:420px; background: rgba(25,25,35,0.45); padding:50px 60px; border-radius:20px; backdrop-filter:blur(4px); box-shadow:0 0 35px rgba(140,80,255,0.25); text-align:center; }
+h1 { font-size:2rem; font-weight:700; text-transform:uppercase; color:#c699ff; text-shadow:0 0 14px rgba(180,120,255,0.6); margin-bottom:35px; letter-spacing:1px; }
+input { width:100%; padding:14px; margin-bottom:18px; border:1px solid rgba(255,255,255,0.1); border-radius:12px; background: rgba(20,20,30,0.6); color:#fff; font-size:16px; text-align:center; outline:none; transition:all 0.2s; backdrop-filter:blur(5px); }
+input:focus { border-color:#a366ff; box-shadow:0 0 10px rgba(163,102,255,0.4); background: rgba(30,30,45,0.75); }
+.btn { width:100%; padding:14px; border:none; border-radius:12px; background: rgba(100,50,200,0.35); color:#fff; font-size:18px; font-weight:600; cursor:pointer; transition:0.3s; text-transform:uppercase; letter-spacing:0.5px; backdrop-filter:blur(4px); margin-top:10px; }
+.btn:hover { background: rgba(157,77,237,0.6); transform:scale(1.04); box-shadow:0 0 20px rgba(157,77,237,0.45); }
+.error { color:#ff5c5c; margin-top:15px; font-size:15px; }
+footer { position:fixed; bottom:15px; text-align:center; width:100%; color:#a0a0b3; font-size:13px; z-index:1; }
+footer a { color:#b366ff; text-decoration:none; font-weight:500; }
+footer a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<div class="login-box">
+    <h1>Lost MC Login</h1>
+    <input type="text" id="username" placeholder="Benutzername">
+    <input type="password" id="password" placeholder="Passwort">
+    <button class="btn" onclick="login()">Anmelden</button>
+    <div id="error" class="error"></div>
+</div>
+<footer>Erstellt von <a href="#">xMER4XESx</a></footer>
+
+<script>
+// Owner-Passwort
+const ownerPassword = "1144";
+// Admin-Passwort
+const adminPassword = "admin123";
+
+// Benutzerliste aus localStorage oder Standardliste
+let users = JSON.parse(localStorage.getItem("users")) || {
+    "Octavia": "114411",
+    "Rico": "114422",
+};
+
+function login() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const error = document.getElementById("error");
+
+    if(!user || !pass){
+        error.textContent = "Bitte Benutzername und Passwort eingeben.";
+        return;
+    }
+
+    let role = "user";
+
+    // Owner kann immer einloggen (Name egal)
+    if(pass === ownerPassword){
+        role = "OWNER";
+        localStorage.setItem("username", user);
+        localStorage.setItem("role", role);
+        window.location.href = "menu.html";
+        return;
+    }
+
+    // Admin
+    if(pass === adminPassword){
+        if(!users[user]){
+            error.textContent = "Dieser Benutzername existiert nicht.";
+            return;
+        }
+        role = "ADMIN";
+    } else {
+        // normales Mitglied
+        if(!users[user] || users[user] !== pass){
+            error.textContent = "Falscher Benutzername oder Passwort.";
+            return;
+        }
+    }
+
+    localStorage.setItem("username", user);
+    localStorage.setItem("role", role);
+    window.location.href = "menu.html";
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
